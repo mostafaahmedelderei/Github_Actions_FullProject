@@ -141,7 +141,6 @@ jobs:
 
   push-ecr:
 
-
     needs: build-package
 
     runs-on: ubuntu-latest
@@ -156,6 +155,7 @@ jobs:
 
 
       - name: Configure AWS credentials
+
         uses: aws-actions/configure-aws-credentials@v4
 
         with:
@@ -184,7 +184,9 @@ jobs:
 
 
 
-      - name: Tag image for ECR
+      # Tag image with version
+
+      - name: Tag image with version
 
         run: |
 
@@ -194,20 +196,61 @@ jobs:
 
 
 
+      # Tag same image as latest
 
-      - name: Push image to ECR
+      - name: Tag image as latest
+
+        run: |
+
+          docker tag \
+          $IMAGE_NAME:${{ needs.build-package.outputs.image_tag }} \
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:latest
+
+
+
+
+      # Push version tag
+
+      - name: Push version image
 
         run: |
 
           docker push \
           ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${{ needs.build-package.outputs.image_tag }}
 
-      - name: Display deployment information
+
+
+
+      # Push latest tag
+
+      - name: Push latest image
+
         run: |
+
+          docker push \
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:latest
+
+
+
+
+      - name: Display deployment information
+
+        run: |
+
           echo "================================"
-          echo "Docker Image pushed successfully"
-          echo "Repository:"
-          echo "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}"
-          echo "Tag:"
-          echo "${{ needs.build-package.outputs.image_tag }}"
+
+          echo "Docker Images pushed successfully"
+
+          echo ""
+
+          echo "Version tag:"
+
+          echo "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${{ needs.build-package.outputs.image_tag }}"
+
+          echo ""
+
+          echo "Latest tag:"
+
+          echo "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:latest"
+
           echo "================================"
