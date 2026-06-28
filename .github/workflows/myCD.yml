@@ -111,7 +111,7 @@ jobs:
 
             docker run -d \
             --name ${{ env.CONTAINER_NAME }} \
-            -p 80:80 \
+            -p 8000:8000 \
             ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
 
