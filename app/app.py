@@ -107,7 +107,7 @@ def render_home_page():
     <main class="page-shell">
       <section class="hero-card">
         <p class="eyebrow">Tiny Health App</p>
-        <h1>Mostafa El-Derei: looking cheerful.</h1>
+        <h1>zeina yehia: looking cheerful.</h1>
         <p class="tagline">
           If you can see this page from your browser, your app is really running somewhere useful.
         </p>
